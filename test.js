@@ -1,11 +1,13 @@
 "use strict";
 
+var path = require('path')
+
 var expect = require('expect.js')
   , RedisServer = require('./redis-server');
 
 describe('redis-server', function () {
     var port = Math.floor(Math.random() * 10000) + 9000
-      , server1, server2, server3;
+      , server1, server2, server3, server4;
 
     it('should start a server', function (done) {
         server1 = new RedisServer({ port: port });
@@ -145,4 +147,15 @@ describe('redis-server', function () {
         expect(server3.close(done)).to.be(true);
         expect(server3.isClosing).to.be(true);
     });
+    it('should use a config if provided', function (done) {
+        var configPath = path.join(__dirname, 'redis.conf')
+        server4 = new RedisServer({
+            configPath: configPath
+        })
+        server4.open(function(error) {
+            expect(server4.isRunning).to.be(true);
+            expect(server4.port).to.be(6000);
+            server4.close(done);
+        })
+    })
 });

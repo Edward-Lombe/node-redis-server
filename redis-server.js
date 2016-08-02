@@ -32,7 +32,15 @@ RedisServer.prototype.open = function RedisServer_prototype_open(callback) {
 
     var self = this;
 
-    this.process = childProcess.spawn('redis-server', ['--port', this.config.port]);
+    var redisArgs = [];
+
+    if (typeof this.config.configPath === 'string') {
+        redisArgs = [this.config.configPath]
+    } else {
+        redisArgs = ['--port', this.config.port];
+    }
+
+    this.process = childProcess.spawn('redis-server', redisArgs);
     this.isOpening = true;
 
     function parse(value) {
